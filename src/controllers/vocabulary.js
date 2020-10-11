@@ -4,6 +4,28 @@ const checkJwt = require("../authz/check-jwt");
 module.exports = (api, db) => {
   const vocabularyRouter = express.Router();
   vocabularyRouter.use(checkJwt.checkJwt);
+  vocabularyRouter.get("/", (req, res) => {
+    db.vocabulary
+      .findAll({
+        where: { userId: req.user.sub },
+        attributes: [
+          "id",
+          "name",
+          [
+            db.sequelize.fn(
+              "date_format",
+              db.sequelize.col("createdAt"),
+              "%d.%m.%Y"
+            ),
+            "createdAt",
+          ],
+        ],
+        order: [["updatedAt", "DESC"]],
+      })
+      .then((vocabularies) => {
+        res.json(vocabularies);
+      });
+  });
   vocabularyRouter.get("/:id", (req, res) => {
     db.vocabulary
       .findOne({
