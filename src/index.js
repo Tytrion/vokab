@@ -24,7 +24,7 @@ const apiRouter = express.Router();
  */
 
 app.use(helmet());
-app.use(cors({ origin: clientOrigins }));
+app.use(cors());
 app.use(express.json());
 
 app.use("/api", apiRouter);
